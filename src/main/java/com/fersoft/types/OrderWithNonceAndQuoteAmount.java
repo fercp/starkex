@@ -18,12 +18,12 @@ public class OrderWithNonceAndQuoteAmount extends OrderWithNonce {
 
     @Override
     protected boolean throwException() {
-        return false;
+        return true;
     }
 
     @Override
     protected RoundingMode getRoundingMode() {
-        return getOrder().side() == StarkwareOrderSide.BUY ? RoundingMode.UP : RoundingMode.DOWN;
+        return  RoundingMode.DOWN;
     }
 
     @Override

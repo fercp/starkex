@@ -18,12 +18,12 @@ public class OrderWithNonceAndPrice extends OrderWithNonce {
 
     @Override
     protected boolean throwException() {
-        return true;
+        return false;
     }
 
     @Override
     protected RoundingMode getRoundingMode() {
-        return RoundingMode.DOWN;
+        return getOrder().side() == StarkwareOrderSide.BUY ? RoundingMode.UP :RoundingMode.DOWN;
     }
 
     @Override

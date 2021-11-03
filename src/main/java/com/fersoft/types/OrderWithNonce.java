@@ -34,7 +34,7 @@ public abstract class OrderWithNonce {
             throw new QuantumSizeException(humanAmount, quantumSize);
         }
 
-        return amount.divide(quantumSize, roundingMode).toBigInteger();
+        return amount.divide(quantumSize, roundingMode).setScale(0, roundingMode).toBigInteger();
     }
 
     protected abstract boolean throwException();

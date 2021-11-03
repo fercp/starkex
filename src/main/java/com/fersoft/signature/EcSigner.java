@@ -23,7 +23,7 @@ public class EcSigner {
         this.curve = curve;
     }
 
-    public static byte[] toByteArray(BigInteger value) {
+    private byte[] toByteArray(BigInteger value) {
         byte[] signedValue = value.toByteArray();
         if (signedValue[0] != 0x00) {
             return signedValue;

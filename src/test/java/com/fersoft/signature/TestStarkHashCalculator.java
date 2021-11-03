@@ -1,17 +1,18 @@
 package com.fersoft.signature;
 
-import com.fersoft.hashing.ConstantPoints;
-import com.fersoft.hashing.PedersonHash;
 import com.fersoft.converters.StarkwareOrderConverter;
 import com.fersoft.exception.FieldExceedMaxException;
 import com.fersoft.exception.HashingException;
 import com.fersoft.exception.QuantumSizeException;
+import com.fersoft.hashing.ConstantPoints;
+import com.fersoft.hashing.PedersonHash;
+import com.fersoft.hashing.StarkHashCalculator;
 import com.fersoft.types.DydxMarket;
 import com.fersoft.types.NetworkId;
 import com.fersoft.types.Order;
+import com.fersoft.types.OrderWithClientId;
 import com.fersoft.types.OrderWithClientIdAndQuoteAmount;
 import com.fersoft.types.OrderWithClientIdWithPrice;
-import com.fersoft.hashing.StarkHashCalculator;
 import com.fersoft.types.StarkwareOrder;
 import com.fersoft.types.StarkwareOrderSide;
 import org.junit.jupiter.api.Test;
@@ -65,5 +66,14 @@ class TestStarkHashCalculator {
         assertThat(STARKWARE_ORDER_CONVERTER.nonceFromClientId("123456"),is(equalTo(new BigInteger("987524242"))));
     }
 
+    @Test
+    void test2() throws QuantumSizeException, NoSuchAlgorithmException, FieldExceedMaxException, HashingException {
+        Order order = new Order("12345", "145.0005", "0.125", DydxMarket.ETH_USD, StarkwareOrderSide.BUY, "2020-09-17T04:15:55.028Z");
+        OrderWithClientId orderWithClientID = new OrderWithClientIdWithPrice(order,
+                "This is an ID that the client came up with to describe this order", "350.00067");
+        StarkwareOrder starkwareOrder = STARKWARE_ORDER_CONVERTER.fromOrderWithClientId(orderWithClientID, NetworkId.ROPSTEN);
+        assertThat(STARK_HASH_CALCULATOR.calculateHash(starkwareOrder).toString(16), is(equalTo("54defe3d7784789849556377433b4160f9eecd0ebb450cf3cdc02cb948abf48")));
+
+    }
 
 }

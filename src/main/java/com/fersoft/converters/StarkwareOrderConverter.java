@@ -130,7 +130,7 @@ public class StarkwareOrderConverter {
         return new BigDecimal(limitFee)
                 .round(new MathContext(6, RoundingMode.DOWN))
                 .multiply(new BigDecimal(quantumsAmountCollateral))
-                .round(new MathContext(0, RoundingMode.UP))
+                .setScale(0, RoundingMode.UP)
                 .toBigInteger();
     }
 
