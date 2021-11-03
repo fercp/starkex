@@ -8,6 +8,7 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 /**
  * Stark curve signer class
@@ -22,6 +23,14 @@ public class EcSigner {
         this.curve = curve;
     }
 
+    public static byte[] toByteArray(BigInteger value) {
+        byte[] signedValue = value.toByteArray();
+        if (signedValue[0] != 0x00) {
+            return signedValue;
+        }
+        return Arrays.copyOfRange(signedValue, 1, signedValue.length);
+    }
+
     /**
      * @param privateKey private key
      * @param message    message to be signed
@@ -31,7 +40,7 @@ public class EcSigner {
         HMacDSAKCalculator hMacDSAKCalculator = new HMacDSAKCalculator(new SHA256Digest());
         ECDSASigner signer = new ECDSASigner(hMacDSAKCalculator);
         signer.init(true, curve.createPrivateKeyParams(privateKey));
-        BigInteger[] signature = signer.generateSignature(fixMessageLength(message).toByteArray());
+        BigInteger[] signature = signer.generateSignature(toByteArray(fixMessageLength(message)));
         logger.trace("signature created for message {} r :{} s:{}", message, signature[0], signature[1]);
         return new Signature(signature[0], signature[1]);
     }
@@ -57,7 +66,6 @@ public class EcSigner {
         signer.init(false, publicKeyParameters);
         return signer.verifySignature(fixMessageLength(message).toByteArray(), signature.r(), signature.s());
     }
-
 
 
 }

@@ -8,6 +8,7 @@ import com.fersoft.types.DydxMarket;
 import com.fersoft.types.NetworkId;
 import com.fersoft.types.Order;
 import com.fersoft.types.OrderWithClientIdAndQuoteAmount;
+import com.fersoft.types.OrderWithClientIdWithPrice;
 import com.fersoft.types.StarkwareOrderSide;
 import org.junit.jupiter.api.Test;
 import java.math.BigInteger;
@@ -22,7 +23,7 @@ class TestStarkSigner {
     private final BigInteger PRIVATE_KEY = new BigInteger("07230d8f6fcba9afb8eea3aa67119b5a1bc117500186c384b5aaee85dafbb64c", 16);
 
     @Test
-    void testSign() throws QuantumSizeException, NoSuchAlgorithmException, FieldExceedMaxException, HashingException, SignException {
+    void testOrderWithClientIdAndQuoteAmount() throws QuantumSizeException, NoSuchAlgorithmException, FieldExceedMaxException, HashingException, SignException {
         OrderWithClientIdAndQuoteAmount order = new OrderWithClientIdAndQuoteAmount(
                 new Order("56277",
                         "1",
@@ -38,4 +39,23 @@ class TestStarkSigner {
         Signature signature = starkSigner.sign(order, NetworkId.ROPSTEN, PRIVATE_KEY);
         assertThat(signature.toString(), is(equalTo(EXPECTED_SIGNATURE)));
     }
+
+    @Test
+    void testSignOrderWithClientIdWithPrice() throws QuantumSizeException, NoSuchAlgorithmException, FieldExceedMaxException, HashingException, SignException {
+        OrderWithClientIdWithPrice order = new OrderWithClientIdWithPrice(
+                new Order("123456",
+                        "1.00",
+                        "0.0015",
+                        DydxMarket.ZEC_USD,
+                        StarkwareOrderSide.SELL,
+                        "2021-11-03T16:22:23Z"),
+                "WyHPW57ZKGwcie18UbEBGcry2QervYgYSG1Fm6YG",
+                "200.0"
+        );
+        StarkSigner starkSigner = new StarkSigner();
+        Signature signature = starkSigner.sign(order, NetworkId.MAINNET, new BigInteger("515282606d04ca75bfda0b2f3f92f9ad591f0153ff79ccac99f0a61016a4c5",16));
+        assertThat(signature.toString(), is(equalTo("0121b9b648ee938ca403bb865ab26aa442edb9b7f2c40edf7f86aae0b9686429014cf84c77fe3701ea4516a9e77c31890a69ec72f1af0c64cada7cbf14313c58")));
+    }
+
+
 }
